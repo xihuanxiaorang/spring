@@ -61,4 +61,5 @@ include 'spring-aop-study'
 include 'spring-webmvc-study'
 include 'spring-beandefinition-study'
 include 'spring-event-study'
+include 'spring-import-bean-study'
 
