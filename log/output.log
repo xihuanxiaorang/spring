@@ -1,0 +1,8 @@
+2023-04-26 02:18:59.006 [main] INFO  f.x.s.a.HelloService:19 - ...HelloService创建了...
+2023-04-26 02:18:59.027 [main] INFO  f.x.s.a.LogAspect:29 - ...LogAspect创建了...
+2023-04-26 02:18:59.034 [main] INFO  f.x.s.a.ApiTest:21 - ======================华丽的分割线=========================
+2023-04-26 02:18:59.036 [main] INFO  f.x.s.a.LogAspect:44 - 前置通知logStart==>sayHello===【args:[小让]}】
+2023-04-26 02:18:59.045 [main] INFO  f.x.s.a.HelloService:26 - 目标方法执行：你好，小让
+2023-04-26 02:18:59.045 [main] INFO  f.x.s.a.LogAspect:56 - 返回通知logReturn==>sayHello===【args:[小让]}】【result：你好，返回通知】
+2023-04-26 02:18:59.046 [main] INFO  f.x.s.a.LogAspect:67 - 后置通知logEnd==>sayHello===【args:[小让]】
+2023-04-26 02:18:59.046 [main] INFO  f.x.s.a.ApiTest:23 - ======================华丽的分割线=========================
