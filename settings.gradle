@@ -59,4 +59,5 @@ settings.gradle.projectsLoaded {
 	}
 }
 include 'spring-aop-source-test'
+include 'spring-beandefinition-source-test'
 
