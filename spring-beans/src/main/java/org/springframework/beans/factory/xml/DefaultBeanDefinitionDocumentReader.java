@@ -138,8 +138,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 						profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
 				// We cannot use Profiles.of(...) since profile expressions are not supported
 				// in XML config. See SPR-12458 for details.
-				// 判断环境是否激活？spring.profile.active 属性值是否在根标签 beans 配置的 profile 属性值中
-				// 比如，当前激活的环境是 prod 的话，即 spring.profile.active = prod，不在 profile = "dev,test" 中，此时就不再解析该 XML 配置文件中的标签，直接返回，跳过该 XML 配置文件
+				// 判断环境是否激活？spring.profiles.active 属性值是否在根标签 beans 配置的 profile 属性值中
+				// 比如，当前激活的环境是 prod 的话，即 spring.profiles.active = prod，不在 profile = "dev,test" 中，此时就不再解析该 XML 配置文件中的标签，直接返回，跳过该 XML 配置文件
 				if (!getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Skipped XML bean definition file due to specified profiles [" + profileSpec +

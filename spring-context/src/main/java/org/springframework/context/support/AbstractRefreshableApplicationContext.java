@@ -134,8 +134,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			// 创建一个新的 bean 工厂，创建出来的 bean 工厂的类型是 DefaultListableBeanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
+			// 定制化 bean 工厂，设置相关属性（包括是否允许覆盖同名称的不同定义的 bean 对象以及是否允许循环依赖）
 			customizeBeanFactory(beanFactory);
-			// 加载 bean 定义信息到 bean 工厂中，该方法由子类去实现
+			// 加载 XML 配置文件中的 bean 定义信息到 bean 工厂中，该方法由子类去实现
 			loadBeanDefinitions(beanFactory);
 			this.beanFactory = beanFactory;
 		} catch (IOException ex) {

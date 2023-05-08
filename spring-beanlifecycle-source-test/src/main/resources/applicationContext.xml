@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+	<bean class="fun.xiaorang.spring.beanlifecycle.BeanLifecycle" init-method="initMethod"
+		  destroy-method="destroyMethod">
+		<property name="id" value="1"/>
+	</bean>
+
+	<!--	注册自定义的 BeanPostProcessor 后置处理器-->
+	<bean class="fun.xiaorang.spring.beanlifecycle.MyBeanPostProcessor"/>
+
+	<!--	开启注解配置，其实在底层就是向容器中注册了 CommonAnnotationBeanPostProcessor、AutowiredAnnotationBeanPostProcessor 等后置处理器，用于处理 @Autowired、@Value、@Resource 等注解-->
+	<context:annotation-config/>
+</beans>

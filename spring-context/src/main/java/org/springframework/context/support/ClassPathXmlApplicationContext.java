@@ -146,7 +146,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);
-		// 解析并保存 XML 配置文件路径
+		// 解析 XML 配置文件路径中的占位符并保存解析后的文件路径
 		setConfigLocations(configLocations);
 		if (refresh) {
 			// 容器刷新十二大步
