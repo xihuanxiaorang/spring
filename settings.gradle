@@ -61,4 +61,5 @@ settings.gradle.projectsLoaded {
 include 'spring-aop-source-test'
 include 'spring-beandefinition-source-test'
 include 'spring-beanlifecycle-source-test'
+include 'spring-circularreference-source-test'
 
