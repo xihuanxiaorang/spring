@@ -565,6 +565,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
 				// Invoke factory processors registered as beans in the context.
+				/*
+					执行所有的 BeanFactory 后置处理器，对 BeanFactory 进行修改或者增强
+					非常重要！！！其中最为重要的一个 BeanFactory 后置处理器 ConfigurationClassPostProcessor 会在此处执行，该后置处理器专门用于解析配置类
+					被 @Configuration、@Component、@ComponentScan、@Import、@ImportResource、@Bean 注解标注的类或方法会被解析封装成 BeanDefinition 后注册到 BeanFactory 中
+					执行完该方法后，所有的 BeanDefinition 就已经准备就绪了.
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -747,6 +753,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		/*
+			对所有的 BeanFactory 后置处理器进行实例化并且按照顺序依次执行；
+			getBeanFactoryPostProcessors()：用于获取当前 BeanFactory 中的 BeanFactory 后置处理器集合，此集合一般情况下为空，
+				除非手动调用 AnnotationConfigApplicationContext#addBeanFactoryPostProcessor() 方法进行添加
+		 */
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
