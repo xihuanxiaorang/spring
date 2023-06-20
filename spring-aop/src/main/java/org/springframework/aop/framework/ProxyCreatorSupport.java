@@ -16,27 +16,27 @@
 
 package org.springframework.aop.framework;
 
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.util.Assert;
 
 /**
  * Base class for proxy factories.
  * Provides convenient access to a configurable AopProxyFactory.
  *
  * @author Juergen Hoeller
- * @since 2.0.3
  * @see #createAopProxy()
+ * @since 2.0.3
  */
 @SuppressWarnings("serial")
 public class ProxyCreatorSupport extends AdvisedSupport {
 
-	private AopProxyFactory aopProxyFactory;
-
 	private final List<AdvisedSupportListener> listeners = new ArrayList<>();
-
-	/** Set to true when the first AOP proxy has been created. */
+	private AopProxyFactory aopProxyFactory;
+	/**
+	 * Set to true when the first AOP proxy has been created.
+	 */
 	private boolean active = false;
 
 
@@ -49,6 +49,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 
 	/**
 	 * Create a new ProxyCreatorSupport instance.
+	 *
 	 * @param aopProxyFactory the AopProxyFactory to use
 	 */
 	public ProxyCreatorSupport(AopProxyFactory aopProxyFactory) {
@@ -56,6 +57,12 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		this.aopProxyFactory = aopProxyFactory;
 	}
 
+	/**
+	 * Return the AopProxyFactory that this ProxyConfig uses.
+	 */
+	public AopProxyFactory getAopProxyFactory() {
+		return this.aopProxyFactory;
+	}
 
 	/**
 	 * Customize the AopProxyFactory, allowing different strategies
@@ -69,14 +76,8 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 	}
 
 	/**
-	 * Return the AopProxyFactory that this ProxyConfig uses.
-	 */
-	public AopProxyFactory getAopProxyFactory() {
-		return this.aopProxyFactory;
-	}
-
-	/**
 	 * Add the given AdvisedSupportListener to this proxy configuration.
+	 *
 	 * @param listener the listener to register
 	 */
 	public void addListener(AdvisedSupportListener listener) {
@@ -86,6 +87,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 
 	/**
 	 * Remove the given AdvisedSupportListener from this proxy configuration.
+	 *
 	 * @param listener the listener to deregister
 	 */
 	public void removeListener(AdvisedSupportListener listener) {
@@ -102,11 +104,17 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		if (!this.active) {
 			activate();
 		}
+		/*
+			this <=> 当前 ProxyFactory 实例对象
+			使用默认的 DefaultAopProxyFactory 根据配置条件（即当前 ProxyFactory 实例对象中的属性信息，如 optimize、proxyTargetClass、interfaces 等等）创建不同的 AopProxy 实例对象
+			JdkDynamicAopProxy 或者 ObjenesisCglibAopProxy
+		 */
 		return getAopProxyFactory().createAopProxy(this);
 	}
 
 	/**
 	 * Activate this proxy configuration.
+	 *
 	 * @see AdvisedSupportListener#activated
 	 */
 	private void activate() {
@@ -118,6 +126,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 
 	/**
 	 * Propagate advice change event to all AdvisedSupportListeners.
+	 *
 	 * @see AdvisedSupportListener#adviceChanged
 	 */
 	@Override

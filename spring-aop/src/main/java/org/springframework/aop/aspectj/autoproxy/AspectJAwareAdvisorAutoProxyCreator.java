@@ -16,14 +16,9 @@
 
 package org.springframework.aop.aspectj.autoproxy;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import org.aopalliance.aop.Advice;
 import org.aspectj.util.PartialOrder;
 import org.aspectj.util.PartialOrder.PartialComparable;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.AbstractAspectJAdvice;
 import org.springframework.aop.aspectj.AspectJPointcutAdvisor;
@@ -32,6 +27,10 @@ import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreat
 import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
 import org.springframework.core.Ordered;
 import org.springframework.util.ClassUtils;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * {@link org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator}
@@ -79,8 +78,7 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 				result.add(pcAdvisor.getAdvisor());
 			}
 			return result;
-		}
-		else {
+		} else {
 			return super.sortAdvisors(advisors);
 		}
 	}
@@ -98,8 +96,18 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 	@Override
 	protected boolean shouldSkip(Class<?> beanClass, String beanName) {
 		// TODO: Consider optimization by caching the list of the aspect names
+		/*
+			由子类 AnnotationAwareAspectJAutoProxyCreator 进行重写，从容器中获取所有候选的增强器 Advisor 存在如下两种途径：
+			1. 从 IoC 容器中获取 Advisor 类型的组件，该方式可以用于兼容 XML 配置文件中配置的 Bean 或者使用 @Component、@Bean 等方式注册到 IoC 容器中的 Advisor 类型组件，
+				当使用 @EnableTransactionManagement 开启事务时会往 IoC 容器中注册一个 ProxyTransactionManagementConfiguration 配置类，
+				而在该配置类中就通过 @Bean 的方式往 IoC 容器中注册一个 BeanFactoryTransactionAttributeSourceAdvisor 增强器
+			2. 解析 IoC 容器中所有标注 @Aspect 注解的组件，将组件中标注 @Around、@Before、@After、@AfterReturning、@AfterThrowing 注解的通知方法构建成增强器 Advisor，然后保存到 advisorsCache 缓存中，
+				使用的时候可以直接从缓存中获取，无需再次进行解析！
+		 */
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
+		// 遍历从容器中获取到的候选增强器 Advisor
 		for (Advisor advisor : candidateAdvisors) {
+			// 判断当前组件是否为候选增强器中的一员？如果是的话，则返回 true，跳过当前组件，表明当前组件无需代理
 			if (advisor instanceof AspectJPointcutAdvisor &&
 					((AspectJPointcutAdvisor) advisor).getAspectName().equals(beanName)) {
 				return true;

@@ -16,15 +16,14 @@
 
 package org.springframework.aop.framework.adapter;
 
+import org.aopalliance.aop.Advice;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.springframework.aop.Advisor;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.aopalliance.aop.Advice;
-import org.aopalliance.intercept.MethodInterceptor;
-
-import org.springframework.aop.Advisor;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
 
 /**
  * Default implementation of the {@link AdvisorAdapterRegistry} interface.
@@ -78,10 +77,22 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 	@Override
 	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
 		List<MethodInterceptor> interceptors = new ArrayList<>(3);
+		// 从增强器中获取通知
 		Advice advice = advisor.getAdvice();
+		/*
+			判断通知是否属于方法拦截器 MethodInterceptor 类型，如以下三种通知就无需通过适配器进行转换就可以直接添加到 interceptors 集合中
+			@Around -> AspectJAroundAdvice
+			@AfterThrowing -> AspectJAfterThrowingAdvice
+			@After -> AspectJAfterAdvice
+		 */
 		if (advice instanceof MethodInterceptor) {
 			interceptors.add((MethodInterceptor) advice);
 		}
+		/*
+			遍历适配器集合，在该类进行实例化的时候就已经注册了三个适配器，分别为 MethodBeforeAdviceAdapter、AfterReturningAdviceAdapter、ThrowsAdviceAdapter
+			@Before -> MethodBeforeAdvice -> MethodBeforeAdviceAdapter -> MethodBeforeAdviceInterceptor
+			@AfterReturning -> AfterReturningAdvice -> AfterReturningAdviceAdapter -> AfterReturningAdviceInterceptor
+		 */
 		for (AdvisorAdapter adapter : this.adapters) {
 			if (adapter.supportsAdvice(advice)) {
 				interceptors.add(adapter.getInterceptor(advisor));

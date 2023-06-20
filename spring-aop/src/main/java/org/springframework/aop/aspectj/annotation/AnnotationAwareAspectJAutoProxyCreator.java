@@ -16,16 +16,16 @@
 
 package org.springframework.aop.aspectj.annotation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * {@link AspectJAwareAdvisorAutoProxyCreator} subclass that processes all AspectJ
@@ -43,8 +43,8 @@ import org.springframework.util.Assert;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @since 2.0
  * @see org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory
+ * @since 2.0
  */
 @SuppressWarnings("serial")
 public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorAutoProxyCreator {
@@ -89,6 +89,14 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	@Override
 	protected List<Advisor> findCandidateAdvisors() {
 		// Add all the Spring advisors found according to superclass rules.
+		/*
+			从容器中获取所有候选的增强器 Advisor 存在如下两种途径：
+			1. 从 IoC 容器中获取 Advisor 类型的组件，该方式可以用于兼容 XML 配置文件中配置的 Bean 或者使用 @Component、@Bean 等方式注册到 IoC 容器中的 Advisor 类型组件，
+				当使用 @EnableTransactionManagement 开启事务时会往 IoC 容器中注册一个 ProxyTransactionManagementConfiguration 配置类，
+				而在该配置类中就通过 @Bean 的方式往 IoC 容器中注册一个 BeanFactoryTransactionAttributeSourceAdvisor 增强器
+			2. 解析 IoC 容器中所有标注 @Aspect 注解的组件，将组件中标注 @Around、@Before、@After、@AfterReturning、@AfterThrowing 注解的通知方法构建成增强器 Advisor，
+				该 Advisor 为 InstantiationModelAwarePointcutAdvisorImpl 类型的实例对象，然后保存到 advisorsCache 缓存中，使用的时候可以直接从缓存中获取，就无需再次解析构建！
+		 */
 		List<Advisor> advisors = super.findCandidateAdvisors();
 		// Build Advisors for all AspectJ aspects in the bean factory.
 		if (this.aspectJAdvisorsBuilder != null) {
@@ -120,8 +128,7 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	protected boolean isEligibleAspectBean(String beanName) {
 		if (this.includePatterns == null) {
 			return true;
-		}
-		else {
+		} else {
 			for (Pattern pattern : this.includePatterns) {
 				if (pattern.matcher(beanName).matches()) {
 					return true;
